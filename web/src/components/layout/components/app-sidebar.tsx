@@ -24,6 +24,7 @@ import { useSidebarView } from '@/hooks/use-sidebar-view'
 import { MOTION_TRANSITION, MOTION_VARIANTS } from '@/lib/motion'
 
 import { NavGroup } from './nav-group'
+import { SidebarSelectionIndicator } from './sidebar-selection-indicator'
 import { SidebarViewHeader } from './sidebar-view-header'
 
 /**
@@ -52,10 +53,12 @@ export function AppSidebar() {
     <Sidebar collapsible={collapsible} variant={variant}>
       {view && <SidebarViewHeader view={view} />}
 
-      <SidebarContent className='py-2'>
+      <SidebarContent className='relative py-2' data-nav-motion='flclash'>
+        <SidebarSelectionIndicator />
         <AnimatePresence mode='wait' initial={false}>
           <motion.div
             key={key}
+            data-nav-list=''
             initial={
               shouldReduce ? false : MOTION_VARIANTS.sidebarSlide.initial
             }
