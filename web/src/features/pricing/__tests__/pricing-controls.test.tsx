@@ -111,17 +111,11 @@ describe('pricing controls', () => {
     ).toBeVisible()
     expect(screen.getByRole('button', { name: /^Vendor A\s*2$/ })).toBeVisible()
     expect(screen.getByRole('button', { name: /^Vendor B\s*1$/ })).toBeVisible()
-    expect(screen.getByRole('button', { name: /^Chat\s*2$/ })).toBeVisible()
-    expect(screen.getByRole('button', { name: /^Chat\s*1$/ })).toBeVisible()
-    expect(
-      screen.getByRole('button', { name: /^Token-based\s*1$/ })
-    ).toBeVisible()
-    expect(
-      screen.getByRole('button', { name: /^Per Request\s*1$/ })
-    ).toBeVisible()
-    expect(
-      screen.getByRole('button', { name: /^Task billing\s*1$/ })
-    ).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Groups' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByRole('button', { name: 'All Vendors' })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: 'Endpoint Type' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('button', { name: 'Model Tags' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Pricing Type' })).not.toBeInTheDocument()
 
     rerender(<PricingSidebar {...sidebarProps} models={[models[1]]} />)
     expect(
@@ -129,14 +123,7 @@ describe('pricing controls', () => {
     ).toBeVisible()
     expect(screen.getByRole('button', { name: /^Vendor A\s*1$/ })).toBeVisible()
     expect(screen.queryByRole('button', { name: /^Vendor B\s*1$/ })).toBeNull()
-    expect(screen.getByRole('button', { name: /^Chat\s*1$/ })).toBeVisible()
-    expect(screen.getByRole('button', { name: /^Chat\s*0$/ })).toBeVisible()
-    expect(
-      screen.getByRole('button', { name: /^Token-based\s*0$/ })
-    ).toBeVisible()
-    expect(
-      screen.getByRole('button', { name: /^Task billing\s*0$/ })
-    ).toBeVisible()
+
   })
 
   it('changes the token unit and keeps the selected unit pressed when clicked again', async () => {
@@ -205,6 +192,7 @@ describe('pricing controls', () => {
     const dialog = await screen.findByRole('dialog', { name: 'Filter' })
     expect(dialog).toHaveAttribute('data-side', 'left')
     expect(within(dialog).getByRole('button', { name: 'Reset' })).toBeDisabled()
+    await user.click(within(dialog).getByRole('button', { name: 'Groups' }))
     await user.click(within(dialog).getByRole('button', { name: /premium/ }))
     expect(props.onGroupChange).toHaveBeenCalledWith('premium')
     rerender(

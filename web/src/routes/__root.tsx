@@ -23,10 +23,12 @@ import {
   Outlet,
   redirect,
   useNavigate,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useEffect } from 'react'
 
+import { AuthenticatedLayout } from '@/components/layout'
 import { NavigationProgress } from '@/components/navigation-progress'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeCustomizationProvider } from '@/context/theme-customization-provider'
@@ -47,6 +49,15 @@ import { useAuthStore } from '@/stores/auth-store'
 function RootComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const authenticated = useAuthStore((state) => Boolean(state.auth.user))
+  // Keep the application shell mounted when crossing between the public
+  // model catalog and protected pages. Their access guards remain separate.
+  const usesAppLayout = useRouterState({
+    select: (state) =>
+      state.matches.some((match) => match.routeId === '/_authenticated') ||
+      (authenticated &&
+        state.matches.some((match) => match.routeId === '/pricing/')),
+  })
 
   // Load system configuration (logo, system name, etc.) from backend
   useSystemConfig({ autoLoad: true })
@@ -95,7 +106,7 @@ function RootComponent() {
   return (
     <ThemeCustomizationProvider>
       <NavigationProgress />
-      <Outlet />
+      {usesAppLayout ? <AuthenticatedLayout /> : <Outlet />}
       <Toaster closeButton duration={5000} position='top-center' richColors />
       {import.meta.env.MODE === 'development' && (
         <>

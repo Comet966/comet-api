@@ -187,7 +187,7 @@ describe('overview setup guide', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Hide setup guide' })
     )
-    expect(screen.getByText('Setup progress: 1/3')).toBeVisible()
+    expect(screen.getByText('Setup progress: 2/3')).toBeVisible()
     expect(
       screen.getByText('Setup guide is collapsed. Expand it anytime.')
     ).toBeVisible()

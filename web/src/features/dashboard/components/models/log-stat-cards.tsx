@@ -33,7 +33,7 @@ import type {
   DashboardFilters,
 } from '@/features/dashboard/types'
 import { toIntlLocale } from '@/i18n/languages'
-import { formatCompactNumber, formatNumber, formatQuota } from '@/lib/format'
+import { formatCompactNumber, formatNumber } from '@/lib/format'
 import { computeTimeRange } from '@/lib/time'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth-store'
@@ -117,20 +117,13 @@ export function LogStatCards(props: LogStatCardsProps) {
 
   const adaptedStats = {
     rpm: stats?.totalCount ?? 0,
-    quota: stats?.totalQuota ?? 0,
     tpm: stats?.totalTokens ?? 0,
   }
 
   const items = statCardsConfig.map((config) => {
     const rawValue = config.getValue(adaptedStats, timeRangeMinutes)
     const locale = toIntlLocale(i18n.resolvedLanguage || i18n.language)
-    const formatted =
-      config.key === 'quota'
-        ? {
-            displayValue: formatQuota(rawValue),
-            fullValue: formatQuota(rawValue),
-          }
-        : formatStatNumber(rawValue, locale)
+    const formatted = formatStatNumber(rawValue, locale)
 
     return {
       title: config.title,
@@ -143,8 +136,8 @@ export function LogStatCards(props: LogStatCardsProps) {
   })
 
   return (
-    <div className='overflow-hidden rounded-lg border'>
-      <div className='divide-border/60 grid min-w-0 grid-cols-2 divide-x sm:grid-cols-3 lg:grid-cols-5'>
+    <div className='analytics-panel analytics-stat-strip overflow-hidden rounded-lg border'>
+      <div className='divide-border/60 grid min-w-0 grid-cols-2 divide-x sm:grid-cols-4'>
         {items.map((it, idx) => {
           const Icon = it.icon
           let valueContent
@@ -170,7 +163,7 @@ export function LogStatCards(props: LogStatCardsProps) {
             valueContent = (
               <>
                 <div
-                  className='text-foreground mt-1 max-w-full truncate font-mono text-base leading-tight font-bold tracking-tight tabular-nums sm:mt-2 sm:text-2xl sm:leading-normal'
+                  className='analytics-stat-value text-foreground mt-1 max-w-full truncate font-mono text-base leading-tight font-bold tracking-tight tabular-nums sm:mt-2 sm:text-2xl sm:leading-normal'
                   title={it.fullValue}
                 >
                   {it.value}
@@ -186,7 +179,7 @@ export function LogStatCards(props: LogStatCardsProps) {
             <div
               key={it.title}
               className={cn(
-                'min-w-0 px-2.5 py-1.5 sm:px-5 sm:py-4',
+                'analytics-stat min-w-0 px-2.5 py-1.5 sm:px-5 sm:py-4',
                 idx === items.length - 1 &&
                   items.length % 2 !== 0 &&
                   'col-span-2 sm:col-span-1'

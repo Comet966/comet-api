@@ -55,12 +55,12 @@ const USER_CHARTS: {
 }[] = [
   {
     value: 'rank',
-    labelKey: 'User Consumption Ranking',
+    labelKey: 'User Token Ranking',
     specKey: 'spec_user_rank',
   },
   {
     value: 'trend',
-    labelKey: 'User Consumption Trend',
+    labelKey: 'User Token Trend',
     specKey: 'spec_user_trend',
   },
 ]
@@ -230,9 +230,9 @@ export function UserCharts(props: UserChartsProps) {
           return (
             <div
               key={chart.value}
-              className='overflow-hidden rounded-lg border'
+              className='analytics-panel overflow-hidden rounded-lg border'
             >
-              <div className='flex w-full items-center gap-2 border-b px-3 py-2 sm:px-5 sm:py-3'>
+              <div className='analytics-panel-heading flex w-full items-center gap-2 border-b px-3 py-2 sm:px-5 sm:py-3'>
                 <IconBadge tone='info' size='sm'>
                   <Users />
                 </IconBadge>

@@ -88,6 +88,48 @@ afterEach(() => {
 })
 
 describe('model cards', () => {
+  it('list rows preserve zero prices and distinguish unavailable cache prices', async () => {
+    const open = vi.fn()
+    render(
+      <ModelCard
+        appearance='list'
+        model={pricingModel({ model_ratio: 0 })}
+        onClick={open}
+      />
+    )
+    expect(screen.getAllByText('$0')).toHaveLength(2)
+    expect(screen.getByText('Cache Write').parentElement).toHaveTextContent('—')
+    expect(screen.getByText('Cache Read').parentElement).toHaveTextContent('—')
+    await userEvent.click(screen.getByRole('button', { name: 'example-model' }))
+    expect(open).toHaveBeenCalledWith('example-model')
+    expect(
+      screen.getByRole('button', { name: 'Copy model name' })
+    ).toBeVisible()
+    expect(
+      screen.getByRole('img', {
+        name: 'Recent success-rate samples; gray bars indicate missing data.',
+      })
+    ).toBeVisible()
+    expect(screen.getByText('Status').parentElement).toHaveTextContent('—')
+  })
+  it('list rows show existing dynamic input, output and cache display values without changing their units', () => {
+    render(
+      <ModelCard
+        appearance='list'
+        tokenUnit='M'
+        model={pricingModel({
+          billing_mode: 'tiered_expr',
+          billing_expr: 'tier("base", p * 2 + c * 12 + cr * 0.2 + cc * 2.5)',
+        })}
+        onClick={vi.fn()}
+      />
+    )
+    expect(screen.getByText('$2')).toBeVisible()
+    expect(screen.getByText('$12')).toBeVisible()
+    expect(screen.getByText('$0.2')).toBeVisible()
+    expect(screen.getAllByText('/ 1M').length).toBeGreaterThanOrEqual(3)
+  })
+
   it('shows separate generic and image cache prices including a free image cache', () => {
     render(
       <CachedPriceCell

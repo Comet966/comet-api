@@ -37,6 +37,7 @@ export type ModelPerfBadgeData = {
 }
 
 export interface ModelPerfBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+  appearance?: 'card' | 'list'
   perf: ModelPerfBadgeData | undefined
 }
 
@@ -76,12 +77,17 @@ export const ModelPerfBadge = memo(function ModelPerfBadge(
     <div
       aria-label={t('Performance metrics for the last 24 hours')}
       className={cn(
-        'flex w-full min-w-0 items-center justify-between gap-3',
+        'flex w-full min-w-0 flex-wrap items-center justify-between gap-3',
         props.className
       )}
     >
-      <dl className='flex min-w-0 items-start gap-5 text-xs tabular-nums'>
-        <div className='w-24 shrink-0'>
+      <dl className='flex min-w-0 flex-1 flex-wrap items-start gap-5 text-xs tabular-nums'>
+        <div
+          className={cn(
+            'shrink-0',
+            props.appearance === 'list' ? 'w-full max-w-sm' : 'w-24'
+          )}
+        >
           <dt
             title={t(
               'Success rate excludes business rejections and includes the current partial hour.'
@@ -101,16 +107,27 @@ export const ModelPerfBadge = memo(function ModelPerfBadge(
             title={t(
               'Recent success-rate samples; gray bars indicate missing data.'
             )}
-            className='mt-1 flex h-3 w-24 items-center gap-px'
+            className={cn(
+              'mt-1 flex items-end',
+              props.appearance === 'list'
+                ? 'h-7 w-full gap-1'
+                : 'h-3 w-24 gap-px'
+            )}
           >
             {STATUS_SLOTS.map((slot) => {
               const rate = statusRates[slot]
+              let barHeight = 'h-3'
+              if (rate != null && rate >= 99) barHeight = 'h-full'
+              else if (rate != null && rate >= 95) barHeight = 'h-5'
               return (
                 <span
                   key={slot}
                   aria-hidden
                   className={cn(
-                    'h-full w-[3px] shrink-0 rounded-xs',
+                    props.appearance === 'list'
+                      ? 'min-w-0 flex-1 rounded-xs'
+                      : 'h-full w-[3px] shrink-0 rounded-xs',
+                    props.appearance === 'list' && barHeight,
                     rate != null &&
                       Number.isFinite(rate) &&
                       rate >= 0 &&

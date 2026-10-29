@@ -25,7 +25,6 @@ import {
   FlaskConical,
   Key,
   LayoutDashboard,
-  ListTodo,
   MessageSquare,
   PlugZap,
   Radio,
@@ -40,7 +39,11 @@ import {
 import { useTranslation } from 'react-i18next'
 
 import type { SidebarData } from '@/components/layout/types'
+import { parseHeaderNavModulesFromStatus } from '@/lib/nav-modules'
 import { ROLE } from '@/lib/roles'
+
+import { useSidebarConfig } from './use-sidebar-config'
+import { useStatus } from './use-status'
 
 /**
  * Root navigation groups for the application sidebar.
@@ -48,8 +51,29 @@ import { ROLE } from '@/lib/roles'
  * These are shown when the URL does not match any nested sidebar view
  * registered in `layout/lib/sidebar-view-registry.ts`.
  */
+const LOG_LINKS = [
+  {
+    title: 'Logs',
+    items: [
+      { title: 'Common Logs', url: '/usage-logs/common' },
+      { title: 'Drawing Logs', url: '/usage-logs/drawing' },
+      { title: 'Task Logs', url: '/usage-logs/task' },
+    ],
+  },
+]
+
 export function useSidebarData(): SidebarData {
   const { t } = useTranslation()
+  const { status } = useStatus()
+  const visibleLogLinks = useSidebarConfig(LOG_LINKS)
+  const firstLogLink = visibleLogLinks[0]?.items[0]
+  const logUrl =
+    firstLogLink && 'url' in firstLogLink
+      ? firstLogLink.url
+      : '/usage-logs/common'
+  const pricingEnabled = parseHeaderNavModulesFromStatus(
+    status as Record<string, unknown> | null
+  ).pricing.enabled
 
   return {
     navGroups: [
@@ -83,27 +107,33 @@ export function useSidebarData(): SidebarData {
             url: '/dashboard/models',
             icon: LayoutDashboard,
           },
+          ...(pricingEnabled
+            ? [{ title: t('Model List'), url: '/pricing', icon: Box }]
+            : []),
           {
             title: t('API Keys'),
             url: '/keys',
             icon: Key,
           },
           {
-            title: t('Usage Logs'),
-            url: '/usage-logs/common',
+            title: t('Logs'),
+            url: logUrl,
+            activeUrls: [
+              '/usage-logs/common',
+              '/usage-logs/drawing',
+              '/usage-logs/task',
+            ],
+            configUrls: [
+              '/usage-logs/common',
+              '/usage-logs/drawing',
+              '/usage-logs/task',
+            ],
             icon: FileText,
           },
           {
             title: t('Audit Logs'),
             url: '/usage-logs/audit',
             icon: ClipboardList,
-          },
-          {
-            title: t('Task Logs'),
-            url: '/usage-logs/task',
-            activeUrls: ['/usage-logs/drawing'],
-            configUrls: ['/usage-logs/drawing', '/usage-logs/task'],
-            icon: ListTodo,
           },
         ],
       },

@@ -18,7 +18,6 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import {
   Hash,
-  Coins,
   Layers,
   Gauge,
   Zap,
@@ -54,14 +53,6 @@ export function useModelStatCardsConfig(): StatCardConfig[] {
       getValue: (stat) => stat?.rpm ?? 0,
     },
     {
-      key: 'quota',
-      title: t('Total Quota'),
-      description: t('Statistical quota'),
-      icon: Coins,
-      iconTone: 'success',
-      getValue: (stat) => stat?.quota ?? 0,
-    },
-    {
       key: 'tokens',
       title: t('Total Tokens'),
       description: t('Statistical tokens'),
@@ -92,34 +83,27 @@ export function useModelStatCardsConfig(): StatCardConfig[] {
 
 export function useSummaryCardsConfig(totals: {
   todayUsageDisplay: string
-  usedDisplay: string
+  todayRequestsDisplay: string
   requestCountDisplay: string
-  currencyLabel: string
-  currencyEnabled: boolean
 }) {
   const { t } = useTranslation()
-
   return [
     {
-      key: 'todayUsage',
-      title: t('Last 24h usage'),
+      key: 'tokens',
+      title: t('Last 24h tokens'),
       value: totals.todayUsageDisplay,
-      description: totals.currencyEnabled
-        ? `${t('Consumed in the last 24 hours')} (${totals.currencyLabel})`
-        : t('Consumed in the last 24 hours'),
+      description: t('Consumed in the last 24 hours'),
       icon: Flame,
     },
     {
-      key: 'usage',
-      title: t('Historical Usage'),
-      value: totals.usedDisplay,
-      description: totals.currencyEnabled
-        ? `${t('Total consumed')} (${totals.currencyLabel})`
-        : t('Total consumed quota'),
+      key: 'requests',
+      title: t('Last 24h requests'),
+      value: totals.todayRequestsDisplay,
+      description: t('Requests in the last 24 hours'),
       icon: TrendingUp,
     },
     {
-      key: 'requests',
+      key: 'totalRequests',
       title: t('Request Count'),
       value: totals.requestCountDisplay,
       description: t('Total requests made'),

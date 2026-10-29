@@ -6777,6 +6777,19 @@
     "Zhipu": "Zhipu",
     "Zhipu GLM": "Zhipu GLM",
     "Zhipu V4": "Zhipu V4",
-    "Zoom": "Zoom"
+    "Zoom": "Zoom",
+    "Last 24h tokens": "Last 24h tokens",
+    "Last 24h requests": "Last 24h requests",
+    "Requests in the last 24 hours": "Requests in the last 24 hours",
+    "Monitor token usage and request volume": "Monitor token usage and request volume",
+    "Token Distribution": "Token Distribution",
+    "User Token Ranking": "User Token Ranking",
+    "User Token Trend": "User Token Trend",
+    "Default token distribution chart": "Default token distribution chart",
+    "Browse available models": "Browse available models",
+    "Inspect requests and errors": "Inspect requests and errors",
+    "A focused home for keys, tokens, routing, and service health.": "A focused home for keys, tokens, routing, and service health.",
+    "Answers for common access questions": "Answers for common access questions",
+    "Refine models by provider, group, and endpoint.": "Refine models by provider, group, and endpoint."
   }
 }

@@ -29,7 +29,6 @@ import {
   Info,
   Loader2,
   Route,
-  WalletCards,
 } from 'lucide-react'
 import {
   Fragment,
@@ -84,7 +83,6 @@ import type {
   FlowOverflowMode,
   FlowRole,
 } from '@/features/dashboard/types'
-import { formatQuota } from '@/lib/format'
 import { ROLE } from '@/lib/roles'
 import { requireServerSuccess } from '@/lib/server-error-message'
 import { computeTimeRange } from '@/lib/time'
@@ -102,7 +100,6 @@ interface FlowChartsProps {
 }
 
 const FLOW_METRIC_OPTIONS = [
-  { value: 'quota', labelKey: 'By quota', icon: WalletCards },
   { value: 'tokens', labelKey: 'By tokens', icon: Hash },
   { value: 'requests', labelKey: 'By requests', icon: Activity },
 ] as const
@@ -266,7 +263,7 @@ export function FlowCharts(props: FlowChartsProps) {
   } else if (isAdmin) {
     flowRole = 'admin'
   }
-  const [metric, setMetric] = useState<FlowMetric>('quota')
+  const [metric, setMetric] = useState<FlowMetric>('tokens')
   const [topNodeLimit, setTopNodeLimit] = useState(DEFAULT_FLOW_TOP_NODE_LIMIT)
   const [overflowMode, setOverflowMode] =
     useState<FlowOverflowMode>('aggregate')
@@ -394,11 +391,7 @@ export function FlowCharts(props: FlowChartsProps) {
     [flowData.filterOptions.nodes]
   )
   const metricLabel = t(FLOW_METRIC_LABEL_KEYS[metric])
-  const formatNodeMetricValue = useCallback(
-    (value: number) =>
-      metric === 'quota' ? formatQuota(value) : formatFlowMetricNumber(value),
-    [metric]
-  )
+  const formatNodeMetricValue = formatFlowMetricNumber
   // Explicit filters (the chips/dropdown control) narrow the rows that feed the
   // chart. They are intentionally independent from the click-to-highlight state
   // below so selecting a filter never dims a node, it removes unrelated rows.
@@ -456,12 +449,18 @@ export function FlowCharts(props: FlowChartsProps) {
   const chartTitle = t('Flow')
   const flowSpec = useMemo(
     () =>
-      buildFlowSankeySpec(flowData.flow, chartTitle, formatQuota, {
-        quota: t('Quota'),
-        tokens: t('Tokens'),
-        requests: t('Requests'),
-        share: t('Share'),
-      }),
+      buildFlowSankeySpec(
+        flowData.flow,
+        chartTitle,
+        formatFlowMetricNumber,
+        {
+          quota: t('Quota'),
+          tokens: t('Tokens'),
+          requests: t('Requests'),
+          share: t('Share'),
+        },
+        false
+      ),
     [chartTitle, flowData.flow, t]
   )
   const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light'
@@ -666,8 +665,8 @@ export function FlowCharts(props: FlowChartsProps) {
         </div>
       </div>
 
-      <div className='overflow-hidden rounded-lg border'>
-        <div className='flex w-full flex-col gap-2 border-b px-3 py-2 sm:px-5 sm:py-3 lg:flex-row lg:items-center lg:justify-between'>
+      <div className='analytics-panel overflow-hidden rounded-lg border'>
+        <div className='analytics-panel-heading flex w-full flex-col gap-2 border-b px-3 py-2 sm:px-5 sm:py-3 lg:flex-row lg:items-center lg:justify-between'>
           <div className='flex min-w-0 items-center gap-2'>
             <IconBadge tone='info' size='sm'>
               <GitBranch />

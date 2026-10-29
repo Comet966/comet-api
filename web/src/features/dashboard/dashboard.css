@@ -1,0 +1,191 @@
+/*
+Copyright (C) 2023-2026 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+/* Data analytics presentation. Keep the existing grid, panel order and chart sizes. */
+.analytics-dashboard {
+  --analytics-line: color-mix(in oklch, var(--border) 75%, var(--card));
+  --analytics-tint: color-mix(in oklch, var(--primary) 5%, var(--card));
+}
+
+.analytics-dashboard .analytics-panel {
+  background-color: var(--card);
+  border-color: var(--analytics-line);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 2px 3px oklch(0.2 0.02 260 / 2%),
+    0 6px 20px oklch(0.2 0.02 260 / 2%);
+}
+
+.analytics-dashboard .analytics-panel-heading {
+  background: linear-gradient(110deg, var(--analytics-tint), var(--card) 65%);
+  border-bottom-color: var(--analytics-line);
+}
+
+.analytics-dashboard .analytics-toolbar [data-slot='tabs-list'] {
+  background: color-mix(in oklch, var(--muted) 65%, var(--card));
+  box-shadow: inset 0 0 0 1px var(--analytics-line);
+}
+
+.analytics-dashboard
+  .analytics-toolbar
+  [data-slot='tabs-trigger'][data-active] {
+  background: var(--card);
+  color: var(--primary);
+  box-shadow: 0 1px 4px color-mix(in oklch, var(--primary) 10%, transparent);
+}
+
+.analytics-dashboard .analytics-toolbar [data-slot='button'] {
+  background-color: var(--card);
+  border-color: var(--analytics-line);
+  box-shadow: 0 1px 2px oklch(0.2 0.02 260 / 3%);
+}
+
+.analytics-dashboard .analytics-toolbar [data-slot='button']:hover {
+  color: var(--primary);
+  border-color: color-mix(in oklch, var(--primary) 28%, var(--border));
+}
+
+.analytics-dashboard .analytics-stat {
+  position: relative;
+  isolation: isolate;
+  transition: background-color 180ms ease;
+}
+
+.analytics-dashboard .analytics-stat::before {
+  content: '';
+  position: absolute;
+  inset: 0 18% auto;
+  height: 2px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.28;
+  transition: opacity 180ms ease;
+}
+
+.analytics-dashboard .analytics-stat-value {
+  font-family: var(--font-sans);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+}
+
+.analytics-dashboard .analytics-stat [aria-hidden='true'] {
+  border-radius: 9px;
+  /* The subtle inset border inherits the metric's existing semantic color. */
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, currentColor 10%, transparent);
+}
+
+.analytics-dashboard .analytics-health {
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklch, var(--success) 4%, var(--card)),
+    var(--card) 60%
+  );
+}
+
+.analytics-dashboard .analytics-health-empty {
+  background: color-mix(in oklch, var(--muted) 20%, var(--card));
+  box-shadow: none;
+  border-style: dashed;
+}
+
+.analytics-dashboard .analytics-chart-tabs {
+  background-color: color-mix(in oklch, var(--muted) 55%, var(--card));
+  border-color: var(--analytics-line);
+}
+
+.analytics-dashboard .analytics-chart-tab {
+  position: relative;
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.analytics-dashboard .analytics-chart-tab[aria-pressed='true'] {
+  background-color: var(--card);
+  color: var(--primary);
+  box-shadow: 0 1px 4px color-mix(in oklch, var(--primary) 12%, transparent);
+}
+
+.analytics-dashboard .analytics-chart-tab::after {
+  content: '';
+  position: absolute;
+  inset: auto 30% 0;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--primary);
+  transform: scaleX(0);
+  opacity: 0;
+  transition:
+    transform 220ms ease,
+    opacity 180ms ease;
+}
+
+.analytics-dashboard .analytics-chart-tab[aria-pressed='true']::after {
+  transform: scaleX(1);
+  opacity: 0.65;
+}
+
+.analytics-dashboard .analytics-chart-tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.dark .analytics-dashboard .analytics-panel {
+  box-shadow:
+    0 2px 8px oklch(0 0 0 / 8%),
+    inset 0 1px 0 oklch(1 0 0 / 3%);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .analytics-dashboard .analytics-stat:hover {
+    background-color: var(--analytics-tint);
+  }
+
+  .analytics-dashboard .analytics-stat:hover::before {
+    opacity: 0.75;
+  }
+
+  .analytics-dashboard .analytics-stat:hover svg :is(path, line, circle),
+  .analytics-dashboard
+    .analytics-chart-tab[aria-pressed='true']
+    svg
+    :is(path, line) {
+    animation: analytics-icon-trace 550ms ease both;
+  }
+}
+
+@keyframes analytics-icon-trace {
+  from {
+    stroke-dasharray: 64;
+    stroke-dashoffset: 64;
+  }
+  to {
+    stroke-dasharray: 64;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analytics-dashboard .analytics-stat,
+  .analytics-dashboard .analytics-stat::before,
+  .analytics-dashboard .analytics-chart-tab,
+  .analytics-dashboard .analytics-chart-tab::after {
+    transition: none;
+  }
+}

@@ -30,6 +30,7 @@ import { useAuthStore } from '@/stores/auth-store'
 
 import { useSidebarConfig } from '../use-sidebar-config'
 import { useSidebarData } from '../use-sidebar-data'
+import { useTopNavLinks } from '../use-top-nav-links'
 
 beforeEach(() => {
   vi.stubGlobal('localStorage', {
@@ -133,7 +134,7 @@ describe('audit log sidebar entry', () => {
       .flatMap((group) => group.items)
       .map((item) => item.title)
     expect(titles).not.toContain('Audit Logs')
-    expect(titles).toContain('Usage Logs')
+    expect(titles).toContain('Logs')
   })
 
   it('legacy configurations show a separate Audit Logs link immediately after Usage Logs', () => {
@@ -143,7 +144,7 @@ describe('audit log sidebar entry', () => {
     )
     const items =
       result.current.find((group) => group.id === 'general')?.items ?? []
-    const usageIndex = items.findIndex((item) => item.title === 'Usage Logs')
+    const usageIndex = items.findIndex((item) => item.title === 'Logs')
     expect(items[usageIndex + 1]).toMatchObject({
       title: 'Audit Logs',
       url: '/usage-logs/audit',
@@ -176,7 +177,53 @@ describe('audit log sidebar entry', () => {
     const titles = result.current
       .flatMap((group) => group.items)
       .map((item) => item.title)
-    expect(titles).not.toContain('Usage Logs')
+    expect(titles).toContain('Logs')
     expect(titles).toContain('Audit Logs')
+    const items = result.current.flatMap((group) => group.items)
+    const log = items.find((item) => item.title === 'Logs')
+    expect(log).toMatchObject({ url: '/usage-logs/drawing' })
+    expect(log && checkIsActive('/usage-logs/task', log)).toBe(true)
   })
+})
+
+describe('model catalog navigation', () => {
+  it.each([1, 10, 100])(
+    'role %s has one common sidebar catalog entry and no top model square entry',
+    (role) => {
+      const client = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      })
+      client.setQueryData(['status'], {
+        HeaderNavModules: JSON.stringify({
+          pricing: { enabled: true, requireAuth: false },
+        }),
+      })
+      useAuthStore
+        .getState()
+        .auth.setUser({ id: 1, username: 'catalog-user', role })
+      function Wrapper(props: { children: ReactNode }) {
+        return (
+          <QueryClientProvider client={client}>
+            {props.children}
+          </QueryClientProvider>
+        )
+      }
+      const { result } = renderHook(
+        () => ({
+          sidebar: useSidebarConfig(useSidebarData().navGroups),
+          top: useTopNavLinks(),
+        }),
+        { wrapper: Wrapper }
+      )
+      const catalogs = result.current.sidebar
+        .flatMap((group) => group.items)
+        .filter((item) => item.url === '/pricing')
+      expect(catalogs).toHaveLength(1)
+      expect(catalogs[0]?.title).toBe('Model List')
+      expect(result.current.top.some((link) => link.href === '/pricing')).toBe(
+        false
+      )
+      client.clear()
+    }
+  )
 })

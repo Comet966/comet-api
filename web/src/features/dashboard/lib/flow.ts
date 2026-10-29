@@ -1081,7 +1081,8 @@ export function flowNodeFilterFromSankeyDatum(
 
 function tooltipMetricLines(
   valueFormatter: (value: number) => string,
-  labels: FlowSankeyLabels
+  labels: FlowSankeyLabels,
+  showQuota: boolean
 ) {
   const metricValue = (datum: Record<string, unknown>, key: string) =>
     numberValue(sankeyDatumValue(datum, key))
@@ -1091,11 +1092,15 @@ function tooltipMetricLines(
     metricValue(datum, key) > 0
 
   return [
-    {
-      key: labels.quota,
-      value: (datum: Record<string, unknown>) =>
-        valueFormatter(metricValue(datum, 'quota')),
-    },
+    ...(showQuota
+      ? [
+          {
+            key: labels.quota,
+            value: (datum: Record<string, unknown>) =>
+              valueFormatter(metricValue(datum, 'quota')),
+          },
+        ]
+      : []),
     {
       key: labels.tokens,
       value: (datum: Record<string, unknown>) =>
@@ -1119,7 +1124,8 @@ export function buildFlowSankeySpec(
   flow: DashboardFlowGraph,
   title: string,
   valueFormatter: (value: number) => string = formatNumber,
-  labels: FlowSankeyLabels = DEFAULT_FLOW_SANKEY_LABELS
+  labels: FlowSankeyLabels = DEFAULT_FLOW_SANKEY_LABELS,
+  showQuota = true
 ): VChartSpec {
   return {
     type: 'sankey',
@@ -1326,7 +1332,7 @@ export function buildFlowSankeySpec(
             return `${sankeyDatumValue(datum, 'name') ?? sankeyDatumValue(datum, 'rawLabel') ?? ''}`
           },
         },
-        content: tooltipMetricLines(valueFormatter, labels),
+        content: tooltipMetricLines(valueFormatter, labels, showQuota),
       },
     },
     background: { fill: 'transparent' },

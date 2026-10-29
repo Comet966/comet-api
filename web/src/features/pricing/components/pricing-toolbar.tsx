@@ -94,7 +94,7 @@ export function PricingToolbar(props: PricingToolbarProps) {
             variant='outline'
             size='sm'
             onClick={() => setMobileFiltersOpen(true)}
-            className='gap-1.5 xl:hidden'
+            className='gap-1.5 lg:hidden'
           >
             <Filter className='size-4' />
             {t('Filter')}

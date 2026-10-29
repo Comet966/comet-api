@@ -6777,6 +6777,19 @@
     "Zhipu": "智谱",
     "Zhipu GLM": "智谱GLM",
     "Zhipu V4": "智谱 V4",
-    "Zoom": "缩放"
+    "Zoom": "缩放",
+    "Last 24h tokens": "近 24 小时 Token 用量",
+    "Last 24h requests": "近 24 小时请求数",
+    "Requests in the last 24 hours": "近 24 小时的请求次数",
+    "Monitor token usage and request volume": "查看 Token 用量与请求数量",
+    "Token Distribution": "Token 用量分布",
+    "User Token Ranking": "用户 Token 用量排行",
+    "User Token Trend": "用户 Token 用量趋势",
+    "Default token distribution chart": "默认 Token 分布图表",
+    "Browse available models": "浏览可用模型",
+    "Inspect requests and errors": "查看请求与错误",
+    "A focused home for keys, tokens, routing, and service health.": "集中管理密钥、Token 用量、路由与服务健康状态。",
+    "Answers for common access questions": "常见接入问题解答",
+    "Refine models by provider, group, and endpoint.": "按供应商、分组和端点筛选模型。"
   }
 }

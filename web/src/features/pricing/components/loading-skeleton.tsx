@@ -28,14 +28,15 @@ export interface LoadingSkeletonProps {
 export function LoadingSkeleton(props: LoadingSkeletonProps) {
   return (
     <div aria-busy='true'>
-      <div className='mx-auto mb-5 flex max-w-3xl flex-col items-center pt-5 sm:mb-10 sm:pt-10'>
-        <Skeleton className='h-[clamp(2.3rem,6.325vw,4.025rem)] w-48 max-w-full sm:w-64' />
-        <Skeleton className='mt-3 h-5 w-56 max-w-full sm:mt-4 sm:h-6' />
-        <Skeleton className='mt-2 h-5 w-full max-w-xl' />
-        <Skeleton className='mt-4 h-10 w-full max-w-2xl sm:mt-6' />
+      <div className='mb-6 flex flex-wrap items-center justify-between gap-4'>
+        <div>
+          <Skeleton className='h-8 w-40' />
+          <Skeleton className='mt-2 h-4 w-56' />
+        </div>
+        <Skeleton className='h-10 w-full max-w-md' />
       </div>
-      <div className='grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)]'>
-        <div className='hidden self-start rounded-xl border p-3 xl:block'>
+      <div className='grid gap-4 lg:grid-cols-[224px_minmax(0,1fr)]'>
+        <div className='hidden self-start rounded-xl border p-3 lg:block'>
           <Skeleton className='mb-4 h-5 w-24' />
           {Array.from({ length: 5 }, (_, index) => (
             <div
@@ -74,7 +75,7 @@ export function LoadingSkeleton(props: LoadingSkeletonProps) {
               ))}
             </div>
           ) : (
-            <div className='grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3'>
+            <div className='flex flex-col gap-3'>
               {Array.from({ length: 6 }, (_, index) => (
                 <Card key={index} className='gap-3'>
                   <CardHeader className='flex flex-row gap-3'>

@@ -45,6 +45,7 @@ import { ModelBillingModeBadge } from './model-billing-mode-badge'
 import { ModelPerfBadge, type ModelPerfBadgeData } from './model-perf-badge'
 
 export interface ModelCardProps {
+  appearance?: 'card' | 'list'
   model: PricingModel
   onClick: (modelName: string) => void
   priceRate?: number
@@ -122,7 +123,10 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
     } else if (dynamicSummary.primaryEntries.length > 0) {
       priceSummary = (
         <>
-          {dynamicSummary.primaryEntries
+          {(props.appearance === 'list' && !dynamicSummary.isTaskUsage
+            ? dynamicSummary.entries
+            : dynamicSummary.primaryEntries
+          )
             .slice(0, dynamicSummary.providerCount ? 2 : undefined)
             .map((entry) => {
               const unitLabelKey = getDynamicPriceUnitLabelKey(entry)
@@ -209,23 +213,36 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
     const prices: { type: PriceType; label: string }[] = [
       { type: 'input', label: t('Input') },
       { type: 'output', label: t('Output') },
-      ...(props.model.cache_ratio != null
-        ? [{ type: 'cache' as const, label: t('Cached') }]
+      ...(props.appearance === 'list'
+        ? [{ type: 'create_cache' as const, label: t('Cache Write') }]
+        : []),
+      ...(props.model.cache_ratio != null || props.appearance === 'list'
+        ? [
+            {
+              type: 'cache' as const,
+              label:
+                props.appearance === 'list' ? t('Cache Read') : t('Cached'),
+            },
+          ]
         : []),
     ]
     priceSummary = prices.map((price) => (
       <div key={price.type} className='flex min-w-0 flex-col gap-1'>
         <span className='text-muted-foreground text-xs'>{price.label}</span>
         <span className='font-mono text-sm font-semibold tabular-nums'>
-          {formatPrice(
-            props.model,
-            price.type,
-            tokenUnit,
-            showRechargePrice,
-            priceRate,
-            usdExchangeRate,
-            props.selectedGroup
-          )}
+          {(price.type === 'cache' && props.model.cache_ratio == null) ||
+          (price.type === 'create_cache' &&
+            props.model.create_cache_ratio == null)
+            ? '—'
+            : formatPrice(
+                props.model,
+                price.type,
+                tokenUnit,
+                showRechargePrice,
+                priceRate,
+                usdExchangeRate,
+                props.selectedGroup
+              )}
           <span className='text-muted-foreground text-xs font-normal'>
             {' '}
             / {tokenUnitLabel}
@@ -250,6 +267,84 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
           </span>
         </span>
       </div>
+    )
+  }
+
+  if (
+    props.appearance === 'list' &&
+    dynamicSummary &&
+    !dynamicSummary.isTaskUsage &&
+    !dynamicSummary.isSpecialExpression &&
+    isTokenBased
+  ) {
+    const missingCacheLabels = [
+      { field: 'cacheCreatePrice', label: 'Cache Write' },
+      { field: 'cacheReadPrice', label: 'Cache Read' },
+    ].filter(
+      (slot) =>
+        !dynamicSummary.entries.some((entry) =>
+          entry.field.startsWith(slot.field)
+        )
+    )
+    priceSummary = (
+      <>
+        {priceSummary}
+        {missingCacheLabels.map((slot) => (
+          <div key={slot.field} className='flex flex-col gap-1'>
+            <span className='text-muted-foreground text-xs'>
+              {t(slot.label)}
+            </span>
+            <span className='text-muted-foreground font-mono text-sm'>—</span>
+          </div>
+        ))}
+      </>
+    )
+  }
+
+  if (props.appearance === 'list') {
+    return (
+      <article className='flex min-w-0 flex-col gap-5 p-5 sm:p-6'>
+        <header className='flex min-w-0 items-start gap-3'>
+          <span
+            aria-hidden
+            className='flex size-7 shrink-0 items-center justify-center'
+          >
+            {modelIcon || initial}
+          </span>
+          <Button
+            variant='link'
+            className='h-auto min-w-0 flex-1 shrink justify-start p-0 text-left text-base font-semibold break-all whitespace-normal'
+            onClick={() => props.onClick(props.model.model_name)}
+          >
+            {props.model.model_name}
+          </Button>
+          <div className='ml-auto flex shrink-0 items-center gap-2'>
+            <ModelBillingModeBadge model={props.model} appearance='caption' />
+            <CopyButton
+              value={props.model.model_name}
+              tooltip={t('Copy model name')}
+              className='size-7'
+            />
+          </div>
+        </header>
+        <div
+          role='group'
+          aria-label={t('Pricing')}
+          className='grid grid-cols-2 gap-x-5 gap-y-4 lg:grid-cols-4'
+        >
+          {priceSummary}
+        </div>
+        <ModelPerfBadge perf={props.perf} appearance='list'>
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={() => props.onClick(props.model.model_name)}
+          >
+            {t('Details')}
+            <ChevronRight aria-hidden className='size-3.5' />
+          </Button>
+        </ModelPerfBadge>
+      </article>
     )
   }
 
