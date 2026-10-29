@@ -186,6 +186,19 @@ describe('audit log sidebar entry', () => {
   })
 })
 
+describe('general sidebar navigation', () => {
+  it('places Playground last in General without a separate Chat group', () => {
+    const { result } = sidebarFor()
+    expect(result.current.find((group) => group.id === 'chat')).toBeUndefined()
+    const items =
+      result.current.find((group) => group.id === 'general')?.items ?? []
+    expect(items.at(-1)).toMatchObject({
+      title: 'Playground',
+      url: '/playground',
+    })
+  })
+})
+
 describe('model catalog navigation', () => {
   it.each([1, 10, 100])(
     'role %s has one common sidebar catalog entry and no top model square entry',

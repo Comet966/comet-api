@@ -144,3 +144,10 @@ For commercial licensing, please contact support@quantumnous.com
     stroke-dashoffset: 0;
   }
 }
+
+/* Keep the pale-blue navigation frame while giving application content a
+ * clean white canvas. The home page and custom theme presets are unaffected. */
+:root:not(.dark) body:not([data-theme-preset]) [data-slot='sidebar-inset'] {
+  --background: oklch(1 0 0);
+  background-color: var(--background);
+}
