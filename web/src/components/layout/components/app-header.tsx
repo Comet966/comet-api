@@ -16,21 +16,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { GithubIcon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { useTranslation } from 'react-i18next'
 
 import { ConfigDrawer } from '@/components/config-drawer'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { NotificationPopover } from '@/components/notification-popover'
 import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Button } from '@/components/ui/button'
 import { SystemUpdateAction } from '@/features/system-update/system-update-action'
 import { useNotifications } from '@/hooks/use-notifications'
 import { useTopNavLinks } from '@/hooks/use-top-nav-links'
 
 import { defaultTopNavLinks } from '../config/top-nav.config'
 import type { TopNavLink } from '../types'
+import { GitHubLink } from './github-link'
 import { Header } from './header'
 import { SystemBrand } from './system-brand'
 import { TopNav } from './top-nav'
@@ -108,8 +105,6 @@ export function AppHeader({
   showConfigDrawer = true,
   showProfileDropdown = true,
 }: AppHeaderProps) {
-  const { t } = useTranslation()
-
   // Prioritize dynamically generated links from backend
   const dynamicLinks = useTopNavLinks()
   const links = dynamicLinks.length > 0 ? dynamicLinks : navLinks
@@ -135,28 +130,7 @@ export function AppHeader({
               <TopNav links={links} />
             </div>
           )}
-          {showGitHub && (
-            <Button
-              variant='ghost'
-              size='icon'
-              className='h-9 w-9'
-              render={
-                <a
-                  href='https://github.com/Comet966/new-api'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  aria-label={t('GitHub')}
-                  title={t('GitHub')}
-                />
-              }
-            >
-              <HugeiconsIcon
-                icon={GithubIcon}
-                className='size-[1.2rem]'
-                aria-hidden='true'
-              />
-            </Button>
-          )}
+          {showGitHub && <GitHubLink />}
           {showNotifications && (
             <NotificationPopover
               open={notifications.popoverOpen}
