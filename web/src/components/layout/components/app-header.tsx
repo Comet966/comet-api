@@ -16,11 +16,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { GithubIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useTranslation } from 'react-i18next'
+
 import { ConfigDrawer } from '@/components/config-drawer'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { NotificationPopover } from '@/components/notification-popover'
 import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
+import { Button } from '@/components/ui/button'
 import { SystemUpdateAction } from '@/features/system-update/system-update-action'
 import { useNotifications } from '@/hooks/use-notifications'
 import { useTopNavLinks } from '@/hooks/use-top-nav-links'
@@ -33,7 +37,7 @@ import { TopNav } from './top-nav'
 
 /**
  * General application Header component
- * Integrates navigation bar, search, configuration and profile functions
+ * Integrates navigation bar, repository link, configuration and profile functions
  *
  * @example
  * // Basic usage
@@ -44,8 +48,8 @@ import { TopNav } from './top-nav'
  * <AppHeader navLinks={customLinks} />
  *
  * @example
- * // Hide navigation bar and search box
- * <AppHeader showTopNav={false} showSearch={false} />
+ * // Hide navigation bar and repository link
+ * <AppHeader showTopNav={false} showGitHub={false} />
  *
  * @example
  * // Fully customize left and right content
@@ -69,10 +73,10 @@ type AppHeaderProps = {
    */
   leftContent?: React.ReactNode
   /**
-   * Whether to show search box
+   * Whether to show the GitHub repository link
    * @default true
    */
-  showSearch?: boolean
+  showGitHub?: boolean
   /**
    * Custom right content, overrides default right content if provided
    */
@@ -98,12 +102,14 @@ export function AppHeader({
   navLinks = defaultTopNavLinks,
   showTopNav = true,
   leftContent,
-  showSearch = true,
+  showGitHub = true,
   rightContent,
   showNotifications = true,
   showConfigDrawer = true,
   showProfileDropdown = true,
 }: AppHeaderProps) {
+  const { t } = useTranslation()
+
   // Prioritize dynamically generated links from backend
   const dynamicLinks = useTopNavLinks()
   const links = dynamicLinks.length > 0 ? dynamicLinks : navLinks
@@ -129,8 +135,27 @@ export function AppHeader({
               <TopNav links={links} />
             </div>
           )}
-          {showSearch && (
-            <Search className='w-8 flex-none [&>span]:hidden sm:[&>span]:inline' />
+          {showGitHub && (
+            <Button
+              variant='ghost'
+              size='icon'
+              className='h-9 w-9'
+              render={
+                <a
+                  href='https://github.com/Comet966/new-api'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  aria-label={t('GitHub')}
+                  title={t('GitHub')}
+                />
+              }
+            >
+              <HugeiconsIcon
+                icon={GithubIcon}
+                className='size-[1.2rem]'
+                aria-hidden='true'
+              />
+            </Button>
           )}
           {showNotifications && (
             <NotificationPopover

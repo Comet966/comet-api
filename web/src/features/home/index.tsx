@@ -27,7 +27,7 @@ import { isLikelyHtml } from '@/lib/content-format'
 import { useAuthStore } from '@/stores/auth-store'
 
 import { CTA, Features, Hero, HowItWorks, Stats } from './components'
-import { ParticleWave } from './components/particle-wave'
+import { HomeDotField } from './components/home-dot-field'
 import { useHomePageContent } from './hooks'
 
 export function Home() {
@@ -111,7 +111,7 @@ export function Home() {
     return (
       <PublicLayout>
         <div className='relative isolate mx-auto max-w-6xl px-4 py-8'>
-          <ParticleWave fullPage />
+          <HomeDotField fullPage />
           <RichContent
             mode='markdown'
             content={content}

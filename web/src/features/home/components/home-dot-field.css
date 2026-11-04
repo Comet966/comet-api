@@ -1,0 +1,27 @@
+.home-dot-field {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 75% 70%,
+    color-mix(in oklch, var(--primary) 8%, transparent),
+    transparent 65%
+  );
+}
+.home-dot-field-page {
+  position: fixed;
+}
+/* Static fallback for browsers without WebGL2, also visible while initializing. */
+.home-dot-field .dot-field {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--primary) 18%, transparent) 1.5px,
+    transparent 2px
+  );
+  background-size: 28px 28px;
+}
+.home-dot-field .dot-field:has(canvas[data-rendering]) {
+  background-image: none;
+}
